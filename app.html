@@ -517,29 +517,18 @@ function withdrawBonus() {
 
 
 function copyRef() {
+  if (!tgUser) { toast('err', 'Откройте через Telegram'); return; }
+  if (!tgApp || !tgApp.sendData) {
+    toast('err', 'Открой через кнопку в боте');
+    return;
+  }
+  var btn = document.getElementById('REF_BTN');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; }
+
   try {
-    if (!tgUser) { toast('err', 'Откройте через Telegram'); return; }
-    if (!tgApp || !tgApp.sendData) {
-      toast('err', 'Открой через кнопку в боте');
-      return;
-    }
-
-    var btn = document.getElementById('REF_BTN');
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>';
-    }
-
-    tgApp.sendData(JSON.stringify({
-      action: 'get_ref',
-      uid: tgUser.id
-    }));
+    tgApp.sendData(JSON.stringify({ action: 'get_ref', uid: tgUser.id }));
   } catch(e) {
-    var btn2 = document.getElementById('REF_BTN');
-    if (btn2) {
-      btn2.disabled = false;
-      btn2.innerHTML = '<i class="ti ti-link"></i>Поделиться ссылкой';
-    }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-link"></i>Поделиться ссылкой'; }
     toast('err', 'Ошибка отправки: ' + e.message);
   }
 }
